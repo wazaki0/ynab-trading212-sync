@@ -16,12 +16,14 @@ jobs:
           node-version: 20
 
       - name: Create Dummy Wrangler Config
+        # This prevents the "no such file or directory" error you saw earlier
         run: echo 'name = "ynab-trading212-sync"' > wrangler.toml
 
       - name: Install Dependencies
         run: npm install
 
       - name: Verify Secrets Presence (Debug)
+        # This confirms GitHub sees your keys without printing the keys themselves
         run: |
           echo "Checking YNAB_ACCESS_TOKEN length: ${#YNAB_VAL}"
           echo "Checking T212_API_KEY length: ${#T212_KEY_VAL}"
