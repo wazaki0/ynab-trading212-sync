@@ -2,18 +2,37 @@ name: YNAB Trading 212 Sync
 on:
   schedule:
     - cron: '0 * * * *' # Runs every hour
-  workflow_dispatch: # Allows you to run it manually
+  workflow_dispatch: # Allows you to run manually
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
-      - run: npm start
+
+      - name: Create Dummy Wrangler Config
+        run: echo 'name = "ynab-trading212-sync"' > wrangler.toml
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Verify Secrets Presence (Debug)
+        run: |
+          echo "Checking YNAB_ACCESS_TOKEN length: ${#YNAB_VAL}"
+          echo "Checking T212_API_KEY length: ${#T212_KEY_VAL}"
+          echo "Checking T212_API_SECRET length: ${#T212_SECRET_VAL}"
+        env:
+          YNAB_VAL: ${{ secrets.YNAB_ACCESS_TOKEN }}
+          T212_KEY_VAL: ${{ secrets.T212_API_KEY }}
+          T212_SECRET_VAL: ${{ secrets.T212_API_SECRET }}
+
+      - name: Run Sync
+        run: npm start
         env:
           YNAB_ACCESS_TOKEN: ${{ secrets.YNAB_ACCESS_TOKEN }}
           YNAB_BUDGET_ID: ${{ secrets.YNAB_BUDGET_ID }}
