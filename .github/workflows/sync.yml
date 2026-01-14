@@ -1,0 +1,22 @@
+name: YNAB Trading 212 Sync
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs every hour
+  workflow_dispatch: # Allows you to run it manually
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm start
+        env:
+          YNAB_ACCESS_TOKEN: ${{ secrets.YNAB_ACCESS_TOKEN }}
+          YNAB_BUDGET_ID: ${{ secrets.YNAB_BUDGET_ID }}
+          YNAB_ACCOUNT_ID: ${{ secrets.YNAB_ACCOUNT_ID }}
+          T212_API_KEY: ${{ secrets.T212_API_KEY }}
+          T212_API_SECRET: ${{ secrets.T212_API_SECRET }}
